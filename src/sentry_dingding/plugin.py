@@ -38,7 +38,11 @@ class DingDingPlugin(NotificationPlugin):
         return bool(self.get_option('access_token', project))
 
     def notify_users(self, group, event, *args, **kwargs):
-        self.post_process(group, event, *args, **kwargs)
+        if self.should_notify(group, event):
+            self.post_process(group, event, *args, **kwargs)
+        else:
+            return None
+        
 
     def post_process(self, group, event, *args, **kwargs):
         """
@@ -51,18 +55,29 @@ class DingDingPlugin(NotificationPlugin):
             return
 
         access_token = self.get_option('access_token', group.project)
+        allow_environment = self.get_option('allow_environment', group.project).split(',')
+        allow_environments = allow_environment.split(',')
+        at_mobile = self.get_option('at_mobiles', group.project)
+        at_mobiles = at_mobiles.split(',')
         send_url = DingTalk_API.format(token=access_token)
-        title = u"New alert from {}".format(event.project.slug)
+        title = u"来自 【{}】【{}】 的异常上报".format(event.project.slug, event.get_environment().name)
+        
+        if bool(len(allow_environments)) and event.get_environment().name not in allow_environments:
+            return
 
         data = {
             "msgtype": "markdown",
             "markdown": {
                 "title": title,
-                "text": u"#### {title} \n > {message} [href]({url})".format(
+                "text": u"#### {title} \n\n > {message} \n\n > [更多详细信息]({url}) \n".format(
                     title=title,
                     message=event.message,
                     url=u"{}events/{}/".format(group.get_absolute_url(), event.id),
-                )
+                ),
+                "at": {
+                    "atMobiles": at_mobiles, 
+                    "isAtAll": False
+                }
             }
         }
         requests.post(

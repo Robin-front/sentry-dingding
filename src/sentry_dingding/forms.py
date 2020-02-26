@@ -8,3 +8,11 @@ class DingDingOptionsForm(forms.Form):
         max_length=255,
         help_text='DingTalk robot access_token'
     )
+    allow_environment = forms.CharField(
+        max_length=255,
+        help_text='allow environment for notification, split width ,'
+    )
+    at_mobiles = forms.CharField(
+        max_length=255,
+        help_test='phone number, split width ,'
+    )
