@@ -10,9 +10,11 @@ class DingDingOptionsForm(forms.Form):
     )
     allow_environment = forms.CharField(
         max_length=255,
+        required=False,
         help_text='allow environment for notification, split width ,'
     )
     at_mobiles = forms.CharField(
         max_length=255,
-        help_test='phone number, split width ,'
+        required=False,
+        help_text='phone number, split width ,'
     )
