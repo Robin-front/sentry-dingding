@@ -82,7 +82,7 @@ class DingDingPlugin(NotificationPlugin):
                 "text": u"#### {title} {at_text} \n\n > {message} \n\n > [更多详细信息]({url}) \n\n ".format(
                     title=title,
                     message=event.message,
-                    url=u"{}events/{}/".format(group.get_absolute_url(), event.id),
+                    url=u"{}events/{}/".format(group.get_absolute_url(), event.event_id),
                     at_text=at_text
                 )
             },
